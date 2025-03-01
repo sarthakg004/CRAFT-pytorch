@@ -52,6 +52,7 @@ parser.add_argument('--canvas_size', default=1280, type=int, help='image size fo
 parser.add_argument('--mag_ratio', default=1.5, type=float, help='image magnification ratio')
 parser.add_argument('--poly', default=False, action='store_true', help='enable polygon type')
 parser.add_argument('--show_time', default=False, action='store_true', help='show processing time')
+parser.add_argument('--result_folder', default='./result/', type=str, help='folder path to save results')
 parser.add_argument('--test_folder', default='/data/', type=str, help='folder path to input images')
 parser.add_argument('--refine', default=False, action='store_true', help='enable link refiner')
 parser.add_argument('--refiner_model', default='weights/craft_refiner_CTW1500.pth', type=str, help='pretrained refiner model')
@@ -62,7 +63,7 @@ args = parser.parse_args()
 """ For test images in a folder """
 image_list, _, _ = file_utils.get_files(args.test_folder)
 
-result_folder = './result/'
+result_folder = args.result_folder
 if not os.path.isdir(result_folder):
     os.mkdir(result_folder)
 
@@ -156,15 +157,17 @@ if __name__ == '__main__':
 
     # load data
     for k, image_path in enumerate(image_list):
-        print("Test image {:d}/{:d}: {:s}".format(k+1, len(image_list), image_path), end='\r')
+        # print("Test image {:d}/{:d}: {:s}".format(k+1, len(image_list), image_path), end='\r')
         image = imgproc.loadImage(image_path)
 
         bboxes, polys, score_text = test_net(net, image, args.text_threshold, args.link_threshold, args.low_text, args.cuda, args.poly, refine_net)
 
         # save score text
         filename, file_ext = os.path.splitext(os.path.basename(image_path))
-        mask_file = result_folder + "/res_" + filename + '_mask.jpg'
-        cv2.imwrite(mask_file, score_text)
+        
+        # if mask is needed to be saved
+        # mask_file = result_folder + "/res_" + filename + '_mask.jpg'
+        # cv2.imwrite(mask_file, score_text)
 
         file_utils.saveResult(image_path, image[:,:,::-1], polys, dirname=result_folder)
 
