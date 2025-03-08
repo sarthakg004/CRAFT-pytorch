@@ -124,7 +124,7 @@ if __name__ == '__main__':
     # load net
     net = CRAFT()     # initialize
 
-    print('Loading weights from checkpoint (' + args.trained_model + ')')
+    # print('Loading weights from checkpoint (' + args.trained_model + ')')
     if args.cuda:
         net.load_state_dict(copyStateDict(torch.load(args.trained_model)))
     else:
@@ -171,4 +171,4 @@ if __name__ == '__main__':
 
         file_utils.saveResult(image_path, image[:,:,::-1], polys, dirname=result_folder)
 
-    print("elapsed time : {}s".format(time.time() - t))
+    # print("elapsed time : {}s".format(time.time() - t))
